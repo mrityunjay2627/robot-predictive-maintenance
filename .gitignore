@@ -205,3 +205,134 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# ==========================================================================================
+# Generic Python Artifacts
+# ==========================================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ==========================================================================================
+# Python Virtual Environments
+# ==========================================================================================
+.venv/
+venv/
+env/
+ENV/
+.env/
+.python-version
+.direnv/
+
+# ==========================================================================================
+# Test & Coverage Artifacts
+# ==========================================================================================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+
+# ==========================================================================================
+# Jupyter Notebook Artifacts
+# ==========================================================================================
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# ==========================================================================================
+# Terraform Specific Files (CRITICAL for security)
+# ==========================================================================================
+
+# Local Terraform directories
+.terraform/
+
+# .tfstate files (SHOULD be stored in a remote backend like S3, not in git)
+*.tfstate
+*.tfstate.*.backup
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data.
+# Use a committed .tfvars.example file instead.
+*.tfvars
+*.tfvars.json
+
+# Ignore override files as they are meant to be used locally
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform plan files can contain sensitive data
+*.tfplan
+
+# ==========================================================================================
+# IDE / Editor Configurations
+# ==========================================================================================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================================================================
+# OS-generated files
+# ==========================================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================================================================
+# Secrets and Credentials (IMPORTANT)
+# ==========================================================================================
+# Never commit sensitive files. Use a secrets manager.
+*.env
+*.pem
+*.key
+*.cer
+credentials.yml
+secrets.yml
+config.json
+
+# AWS CLI credentials
+.aws/
+credentials
+
+# ==========================================================================================
+# Local Logs and Databases
+# ==========================================================================================
+*.log
+*.sql
+*.sqlite
