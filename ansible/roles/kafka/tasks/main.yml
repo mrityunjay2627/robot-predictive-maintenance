@@ -1,0 +1,93 @@
+---
+# This is the step-by-step instruction list for setting up a Kafka server.
+
+# --- Block 1: System Preparation ---
+- name: Update APT package cache
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600 # Update only if cache is older than 1 hour
+
+- name: Install Java (required for Kafka)
+  ansible.builtin.apt:
+    name: default-jdk
+    state: present
+
+# --- Block 2: Create Kafka User for Security ---
+- name: Create a 'kafka' group
+  ansible.builtin.group:
+    name: kafka
+    state: present
+
+- name: Create the 'kafka' user
+  ansible.builtin.user:
+    name: kafka
+    group: kafka
+    shell: /bin/bash
+    home: /home/kafka
+
+# --- Block 3: Download and Install Kafka ---
+- name: Download and unarchive Kafka binaries
+  ansible.builtin.unarchive:
+    src: "https://archive.apache.org/dist/kafka/3.5.1/kafka_2.13-3.5.1.tgz"
+    dest: /opt/
+    remote_src: yes
+    creates: /opt/kafka_2.13-3.5.1 # Only download if this directory doesn't exist
+
+- name: Create a symbolic link for the Kafka directory
+  ansible.builtin.file:
+    src: /opt/kafka_2.13-3.5.1
+    dest: /opt/kafka
+    state: link
+    owner: kafka
+    group: kafka
+
+# --- Block 4: Create Data Directories ---
+- name: Create the Zookeeper data directory
+  ansible.builtin.file:
+    path: /var/lib/zookeeper
+    state: directory
+    owner: kafka
+    group: kafka
+
+- name: Create the Kafka log directory
+  ansible.builtin.file:
+    path: /var/lib/kafka
+    state: directory
+    owner: kafka
+    group: kafka
+
+# --- Block 5: Configure Services ---
+- name: Copy Zookeeper properties from template
+  ansible.builtin.template:
+    src: zookeeper.properties.j2
+    dest: /opt/kafka/config/zookeeper.properties
+    owner: kafka
+    group: kafka
+
+- name: Copy Kafka server properties from template
+  ansible.builtin.template:
+    src: server.properties.j2
+    dest: /opt/kafka/config/server.properties
+    owner: kafka
+    group: kafka
+
+# --- Block 6: Create and Manage Services ---
+- name: Copy Zookeeper systemd service file
+  ansible.builtin.template:
+    src: zookeeper.service.j2
+    dest: /etc/systemd/system/zookeeper.service
+
+- name: Copy Kafka systemd service file
+  ansible.builtin.template:
+    src: kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+
+- name: Start and enable Zookeeper and Kafka services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  loop:
+    - zookeeper
+    - kafka

@@ -1,0 +1,19 @@
+# This file configures the Kafka broker service.
+
+# --- Unique Broker ID ---
+# We get the server name from the inventory (e.g., kafka-broker-1)
+# and use a filter to extract the number at the end for the unique ID.
+broker.id={{ inventory_hostname | regex_replace('^kafka-broker-', '') }}
+
+# --- Network Listeners ---
+# 'ansible_host' is a special variable that holds the server's private IP.
+listeners=PLAINTEXT://{{ ansible_host }}:9092
+
+# --- Log Directory ---
+# The directory we created in a previous task.
+log.dirs=/var/lib/kafka
+
+# --- Zookeeper Connection ---
+# This is a loop that builds a comma-separated list of all Zookeeper servers.
+# It makes the cluster automatically discover its members.
+zookeeper.connect={% for host in groups['kafka_servers'] %}{{ hostvars[host]['ansible_host'] }}:2181{% if not loop.last %},{% endif %}{% endfor %}

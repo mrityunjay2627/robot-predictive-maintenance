@@ -1,0 +1,10 @@
+---
+- name: restart zookeeper
+  ansible.builtin.systemd:
+    name: zookeeper
+    state: restarted
+
+- name: restart kafka
+  ansible.builtin.systemd:
+    name: kafka
+    state: restarted

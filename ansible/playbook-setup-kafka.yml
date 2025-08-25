@@ -1,0 +1,6 @@
+---
+- name: Install and Configure Kafka Cluster
+  hosts: kafka_servers
+  become: yes
+  roles:
+    - kafka

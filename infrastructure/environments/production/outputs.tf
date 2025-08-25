@@ -12,3 +12,13 @@ output "public_subnets" {
   description = "List of IDs of public subnets."
   value       = module.vpc.public_subnets
 }
+
+output "bastion_public_ip" {
+  description = "Public IP address of the bastion host."
+  value       = aws_instance.bastion.public_ip
+}
+
+output "kafka_broker_private_ips" {
+  description = "Private IP addresses of the Kafka brokers."
+  value       = aws_instance.kafka_broker.*.private_ip
+}
