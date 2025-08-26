@@ -161,3 +161,48 @@ resource "aws_instance" "kafka_broker" {
     Name = "kafka-broker-${count.index + 1}"
   }
 }
+
+# --- Security Group for Airflow ---
+resource "aws_security_group" "airflow_sg" {
+  name   = "airflow-sg"
+  vpc_id = module.vpc.vpc_id
+
+  # Allow access to the Airflow Web UI (port 8080) from your IP
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    # NOTE: In production, you would restrict this to your own IP address.
+    # cidr_blocks = ["YOUR_IP_ADDRESS/32"]
+    cidr_blocks = ["0.0.0.0/0"] # Open for this project
+  }
+
+  # Allow SSH access ONLY from the bastion host
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# --- EC2 Instance for Airflow ---
+resource "aws_instance" "airflow" {
+  instance_type               = "t3.medium" # Good starting size for Airflow
+  ami                         = data.aws_ami.ubuntu.id # Use the same Ubuntu AMI
+  key_name                    = "robot-project-key" # <-- Replace with your key pair name
+
+  # Place it in a PUBLIC subnet to access the UI
+  subnet_id                   = module.vpc.public_subnets[1]
+  vpc_security_group_ids      = [aws_security_group.airflow_sg.id]
+  associate_public_ip_address = true
+
+  tags = { Name = "airflow-server" }
+}
